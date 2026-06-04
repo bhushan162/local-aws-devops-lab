@@ -19,7 +19,7 @@ The environment is defined via `docker-compose.yml` and spins up two primary ser
   
 ## 🚀 Getting Started
 
-## prerequisits 
+## Prerequisites 
 - [Docker](https://docs.docker.com/get-docker/)
 - [Docker Compose](https://docs.docker.com/compose/install/)
 
@@ -31,7 +31,7 @@ Clone this repository and spin up the environment in detached mode:
    ```bash
    git clone https://github.com/bhushan162/local-aws-devops-lab
     ```
-2. spin up the environment in detached mode
+2. Spin up the environment
    ```bash
    docker compose up -d --build
    ```
