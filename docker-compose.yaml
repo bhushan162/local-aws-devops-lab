@@ -26,6 +26,10 @@ services:
       - AWS_ACCESS_KEY_ID=test
       - AWS_SECRET_ACCESS_KEY=test
       - AWS_DEFAULT_REGION=us-east-1
+      # For Python / Boto3
+      - AWS_ENDPOINT_URL=http://local-aws:4566
+      # For the awslocal CLI wrapper
+      - LOCALSTACK_HOST=local-aws:4566
     networks:
       - devops-net
     depends_on:
