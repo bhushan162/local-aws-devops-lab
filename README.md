@@ -1,47 +1,66 @@
 # Local AWS DevOps Lab
 
-A containerized local development environment utilizing LocalStack and a custom Ubuntu client for AWS CLI operations.
+A robust, containerized local development environment utilizing [LocalStack](https://localstack.cloud/) and a custom Ubuntu client. This project allows for seamless, offline AWS infrastructure testing and scripting without incurring cloud costs.
+
 
 ## Architecture
-- **local-aws-server**: Runs LocalStack to emulate AWS services locally.
-- **ubuntu-aws-client**: A lightweight container pre-configured with Python 3 and AWS CLI v2.
-- **devops-net**: Custom Docker bridge network for internal DNS resolution.
 
-## Getting Started
+The environment is defined via `docker-compose.yml` and spins up two primary services connected via a custom bridge network (`devops-net`):
+
+1. **`local-aws-server` (LocalStack)**: Emulates core AWS services locally (listening on port `4566`).
+2. **`ubuntu-aws-client` (Ubuntu 24.04)**: A lightweight client container pre-configured with:
+   - Python 3 & Pip
+   - AWS CLI v2
+   - `awslocal` (a wrapper to automatically route AWS CLI commands to LocalStack)
+   - Environment variables configured to natively route Boto3/SDK requests to LocalStack.
+3. **`devops-net`**: Custom Docker bridge network for internal DNS resolution.
+
+
+  
+## 🚀 Getting Started
+
+## prerequisits 
+- [Docker](https://docs.docker.com/get-docker/)
+- [Docker Compose](https://docs.docker.com/compose/install/)
+
+### 1. Build and Run
+Clone this repository and spin up the environment in detached mode:
+
 
 1. Clone the repository:
    ```bash
-   git clone <repo-url>
-2. Access the Client Container
+   git clone https://github.com/bhushan162/local-aws-devops-lab
+    ```
+2. spin up the environment in detached mode
+   ```bash
+   docker compose up -d --build
+   ```
+3. Access the Client Container
 Attach an interactive terminal to the Ubuntu client to start executing commands:
+    ```Bash
+    docker exec -it ubuntu-aws-client bash
+    ```
 
-Bash
-docker exec -it ubuntu-aws-client bash
-💻 Usage
-Using the AWS CLI
+## Usage
+### Using the AWS CLI
 Because the awslocal package is installed and the AWS_ENDPOINT_URL environment variable is set, you don't need to specify endpoint URLs manually.
 
 Create a test S3 bucket:
 
-Bash
+```Bash
 awslocal s3 mb s3://devops-test-bucket
+```
 List the buckets:
 
-Bash
+```Bash
 awslocal s3 ls
-Using Python (Boto3)
-Modern versions of boto3 automatically detect the AWS_ENDPOINT_URL environment variable defined in our Docker Compose file. You can run standard Python scripts without hardcoding LocalStack endpoints:
+```
 
-Python
-import boto3
+## 🧹 Cleanup
 
-# Automatically routes to http://local-aws:4566
-s3 = boto3.client('s3')
-response = s3.list_buckets()
-print(response)
-🧹 Cleanup
 To tear down the environment and remove the containers and network:
 
-Bash
+```Bash
 docker compose down
-Maintained by Bhushan Chougale
+```
+Maintained by [Bhushan Chougale](https://github.com/bhushan162)
