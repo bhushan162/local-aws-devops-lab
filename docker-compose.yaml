@@ -1,0 +1,39 @@
+version: "3.8"
+
+services:
+  local-aws:
+    image: localstack/localstack:4.4.0
+    container_name: local-aws-server
+    ports:
+      - "4566:4566"            # LocalStack API Gateway
+      - "4510-4559:4510-4559"  # External services port range
+    environment:
+      - DEBUG=1
+      - DOCKER_HOST=unix:///var/run/docker.sock
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "localstack_data:/var/lib/localstack" # Persist your local AWS state
+    networks:
+      - devops-net
+
+  ubuntu-client:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ubuntu-aws-client
+    environment:
+      # Dummy credentials required by the AWS CLI to execute commands
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
+      - AWS_DEFAULT_REGION=us-east-1
+    networks:
+      - devops-net
+    depends_on:
+      - local-aws
+
+volumes:
+  localstack_data:
+
+networks:
+  devops-net:
+    driver: bridge
